@@ -83,7 +83,13 @@
     <ClCompile Include="..\..\APLPIe\Src\Peripherals\Pwm.cpp" />
     <ClCompile Include="..\..\APLPIe\Src\ScreenLog.cpp" />
     <ClCompile Include="..\..\APLPIe\Src\Timer.cpp" />
-    <ClCompile Include="AxleCounter.cpp" />
+    <ClCompile Include="AxleDetector\LeftWheelFirst.cpp" />
+    <ClCompile Include="AxleDetector\LeftWheelSecond.cpp" />
+    <ClCompile Include="AxleDetector\RightWheelFirst.cpp" />
+    <ClCompile Include="AxleDetector\RightWheelSecond.cpp" />
+    <ClCompile Include="AxleSensor.cpp" />
+    <ClCompile Include="AxleDetector\AxleDetector.cpp" />
+    <ClCompile Include="AxleDetector\Idle.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="TrainBlockDetector.cpp" />
   </ItemGroup>
@@ -101,7 +107,15 @@
     <ClInclude Include="..\..\APLPIe\Src\Headers\Pwm.h" />
     <ClInclude Include="..\..\APLPIe\Src\Headers\ScreenLog.h" />
     <ClInclude Include="..\..\APLPIe\Src\Headers\Timer.h" />
-    <ClInclude Include="Headers\AxleCounter.h" />
+    <ClInclude Include="..\..\CPlusPlusStateMchine\src\StateMachine.h" />
+    <ClInclude Include="AxleDetector\AxleDetector.h" />
+    <ClInclude Include="AxleDetector\Idle.h" />
+    <ClInclude Include="AxleDetector\LeftWheelFirst.h" />
+    <ClInclude Include="AxleDetector\LeftWheelSecond.h" />
+    <ClInclude Include="AxleDetector\RightWheelFirst.h" />
+    <ClInclude Include="AxleDetector\RightWheelSecond.h" />
+    <ClInclude Include="AxleDetector\StatesTriggers.h" />
+    <ClInclude Include="Headers\AxleSensor.h" />
     <ClInclude Include="Headers\PulseGenerator.h" />
     <ClInclude Include="Headers\StopWatch.h" />
     <ClInclude Include="Headers\TrainBlockDetector.h" />

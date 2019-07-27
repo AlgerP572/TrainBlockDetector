@@ -3,14 +3,14 @@
 class TrainBlockDetector
 {
 private:
-	AxleCounter* _enterAxleCounter;
+	AxleSensor* _enterAxleCounter;
 
 	float _trainScaleSpeedKmH;
 
 	void CalculateSpeed(int axleCount, float axleScaleSpeedKmH);
 
 public:
-	TrainBlockDetector(AxleCounter* enterAxleCounter);
+	TrainBlockDetector(AxleSensor* enterAxleCounter);
 	
 	int TrainAxleCount;
 	bool TrainPresent;

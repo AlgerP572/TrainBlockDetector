@@ -10,8 +10,10 @@
 #include "../../../APLPIe/Src/Headers/Display.h"
 
 #include "./Headers/StopWatch.h"
-#include "./Headers/AxleCounter.h"
+#include "./Headers/AxleSensor.h"
 #include "./Headers/TrainBlockDetector.h"
+
+#include "./AxleDetector/AxleDetector.h"
 
 // Display (These select the digit to display.)
 #define   DisplayPin0    2
@@ -64,9 +66,9 @@ static FourDigitSevenSegmentDisplay display(gpio,
 	characterPins);
 
 const int numAxleCounters = 1;
-static AxleCounter axleCounters[numAxleCounters] =
+static AxleSensor axleCounters[numAxleCounters] =
 {
-	AxleCounter(&gpio,
+	AxleSensor(&gpio,
 		LeftRailInput,
 		RightRailInput,
 		LeftRailOutput,

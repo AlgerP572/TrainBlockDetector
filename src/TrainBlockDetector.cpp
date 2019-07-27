@@ -4,11 +4,11 @@
 #include "../../../APLPIe/Src/Headers/Timer.h"
 #include "./Headers/StopWatch.h"
 
-#include "./Headers/AxleCounter.h"
+#include "./Headers/AxleSensor.h"
 #include "./Headers/TrainBlockDetector.h"
 
 
-TrainBlockDetector::TrainBlockDetector(AxleCounter* enterAxleCounter)
+TrainBlockDetector::TrainBlockDetector(AxleSensor* enterAxleCounter)
 {	
 	using namespace std::placeholders;
 
