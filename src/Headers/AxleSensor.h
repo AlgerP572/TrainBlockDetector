@@ -7,6 +7,13 @@
 #include "../../../APLPIe/Src/Headers/Timer.h"
 #include "./StopWatch.h"
 
+enum class AxleType
+{
+	RightToLeftAxle = -1,
+	UnknownAxle = 0,
+	LeftToRightAxle = 1
+};
+
 class AxleSensor
 {
 private:
@@ -19,8 +26,8 @@ private:
 	PinState _leftOutputState;
 	PinState _rightOutputState;
 
-	int _leftRailCount;
-	int _rightRailCount;
+//	int _leftRailCount;
+	//int _rightRailCount;
 
 	Timer _axelTimer;
 	Stopwatch<std::chrono::microseconds> _axelTime;
@@ -42,13 +49,13 @@ private:
 	float CalculateSpeed();
 
 public:
-	int AxleCount;
+//	int AxleCount;
 	
 	AxleSensor(Gpio* gpio, int leftRailPin, int rightRailPin, int leftOutputPin = -1, int rightOutputPin = -1);
 	void SysInit(void);
 	void RefreshOutputStatus();
 
-	std::function<void(int, float)> AxleDtected;
+	std::function<void(AxleType, float)> AxleDtected;
 
 	void LeftWheelFirst();
 	void LeftWheelSecond();

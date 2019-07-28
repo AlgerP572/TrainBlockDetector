@@ -13,7 +13,7 @@ TrainBlockDetector::TrainBlockDetector(AxleSensor* enterAxleCounter)
 	using namespace std::placeholders;
 
 	_enterAxleCounter = enterAxleCounter;
-	_enterAxleCounter->AxleDtected = std::bind(&TrainBlockDetector::CalculateSpeed,
+	_enterAxleCounter->AxleDtected = std::bind(&TrainBlockDetector::AxleDetected,
 		this,
 		_1,
 		_2);
@@ -21,9 +21,9 @@ TrainBlockDetector::TrainBlockDetector(AxleSensor* enterAxleCounter)
 	TrainPresent = false;
 }
 
-void TrainBlockDetector::CalculateSpeed(int axleCount, float axleScaleSpeedKmH)
+void TrainBlockDetector::AxleDetected(AxleType axleType, float axleScaleSpeedKmH)
 {
-	TrainAxleCount++;
+	TrainAxleCount+=(int) axleType;
 	_trainScaleSpeedKmH = ((_trainScaleSpeedKmH * ((float)TrainAxleCount - 1.0f)) + axleScaleSpeedKmH) / (float)TrainAxleCount;
 
 	if (TrainAxleCount > 0)

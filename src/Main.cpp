@@ -65,8 +65,8 @@ static FourDigitSevenSegmentDisplay display(gpio,
 	DisplayPin3,
 	characterPins);
 
-const int numAxleCounters = 1;
-static AxleSensor axleCounters[numAxleCounters] =
+const int numAxleSensors = 1;
+static AxleSensor axleSensors[numAxleSensors] =
 {
 	AxleSensor(&gpio,
 		LeftRailInput,
@@ -75,11 +75,11 @@ static AxleSensor axleCounters[numAxleCounters] =
 		RightRailOutput)
 };
 
-const int numTrainBlockDtectors = 1;
+const int numTrainBlockDetectors = 1;
 
-static TrainBlockDetector trainBlockDetector[numTrainBlockDtectors] =
+static TrainBlockDetector trainBlockDetector[numTrainBlockDetectors] =
 {
-	TrainBlockDetector(&(axleCounters[0]))
+	TrainBlockDetector(&(axleSensors[0]))
 };
 
 void sysInit(void)
@@ -118,9 +118,9 @@ void sysInit(void)
 	// Now init devices... For now working definition is
 	// a device is made up of one or more dependent peripherals
 	display.SysInit();
-	for (int i = 0; i < numAxleCounters; i++)
+	for (int i = 0; i < numAxleSensors; i++)
 	{
-		axleCounters[i].SysInit();
+		axleSensors[i].SysInit();
 	}
 }
 
@@ -172,13 +172,13 @@ int main(void)
 
 		// Need to continuously update the dislpay
 		// so it can be seen properly.
-		display.SetDisplayValue(axleCounters[0].AxleCount);
+		display.SetDisplayValue(trainBlockDetector[0].TrainAxleCount);
 		display.Display();
 
 		// For prototype display the state of the inputs
-		for (int i = 0; i < numAxleCounters; i++)
+		for (int i = 0; i < numAxleSensors; i++)
 		{
-			axleCounters[i].RefreshOutputStatus();
+			axleSensors[i].RefreshOutputStatus();
 		}
 	}
 

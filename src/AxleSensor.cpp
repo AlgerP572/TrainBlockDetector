@@ -21,7 +21,7 @@ AxleSensor::AxleSensor(Gpio* gpio,
 	_axleDetector(this)
 {
 	_gpio = gpio;
-	AxleCount = 0;	
+//	AxleCount = 0;	
 	_leftRailPin = leftRailPin;
 	_rightRailPin = rightRailPin;
 
@@ -71,45 +71,11 @@ void AxleSensor::RefreshOutputStatus()
 void AxleSensor::LeftRailISR()
 {
 	_axleDetector.Trigger(TRIGGERS::LEFTWHEELSENSE);
-
-	//if (_rightRailCount > 0 &&
-	//	_leftRailCount > 0)
-	//{
-
-	//	// Nothing to do waiting for reset
-	//	// to count next axle.
-	//	return;
-	//}
-
-	//_leftRailCount++;
-	//_leftOutputState = PinState::High;
-
-	//// Important: Does not restart if already going...
-	//_axelTime.Start();
-
-	//if (_rightRailCount > 0)
-	//{
-	//	AxleCount++;
-
-	//	static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 10000000.0f /* mm/km */;
-	//	float axelSpeedkmH = CalculateSpeed();
-	//	int axleDebounceTime = (int) (scaleFactor * _axelScaleSizeMm / axelSpeedkmH); // msec conversion.
-
-	//	_axelTimer.Start((char*)"LeftAxel",
-	//		std::bind(&AxleSensor::ResetForNextAxel, this),
-	//		axleDebounceTime,
-	//		0);
-
-	//	if (AxleDtected != NULL)
-	//	{
-	//		AxleDtected(AxleCount, axelSpeedkmH);
-	//	}
-	//}
 }
 
 void AxleSensor::LeftWheelFirst()
 {
-	_leftRailCount++;
+//	_leftRailCount++;
 	_leftOutputState = PinState::High;
 
 	// Important: Does not restart if already going...
@@ -118,9 +84,9 @@ void AxleSensor::LeftWheelFirst()
 
 void AxleSensor::LeftWheelSecond()
 {
-	if (_rightRailCount > 0)
-	{
-		AxleCount++;
+//	if (_rightRailCount > 0)
+//	{
+//		AxleCount++;
 
 		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 10000000.0f /* mm/km */;
 		float axelSpeedkmH = CalculateSpeed();
@@ -133,25 +99,30 @@ void AxleSensor::LeftWheelSecond()
 
 		if (AxleDtected != NULL)
 		{
-			AxleDtected(AxleCount, axelSpeedkmH);
+			AxleDtected(AxleType::RightToLeftAxle, axelSpeedkmH);
 		}
-	}
+//	}
+}
+
+void AxleSensor::RightRailISR()
+{
+	_axleDetector.Trigger(TRIGGERS::RIGHTWHEELSENSE);	
 }
 
 void AxleSensor::RightWheelFirst()
 {
-	_rightRailCount++;
+//	_rightRailCount++;
 	_rightOutputState = PinState::High;
-		
+
 	// Important: Does not restart if already going...
 	_axelTime.Start();
 }
 
 void AxleSensor::RightWheelSecond()
 {
-	if (_leftRailCount > 0)
-	{		
-		AxleCount--;
+//	if (_leftRailCount > 0)
+//	{
+//		AxleCount--;
 
 		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 10000000.0f /* mm/km */;
 		float axelSpeedkmH = CalculateSpeed();
@@ -160,13 +131,13 @@ void AxleSensor::RightWheelSecond()
 		_axelTimer.Start("RightAxel",
 			std::bind(&AxleSensor::AxleDebounce, this),
 			axleDebounceTime,
-			0);		
+			0);
 
 		if (AxleDtected != NULL)
 		{
-			AxleDtected(AxleCount, axelSpeedkmH);
+			AxleDtected(AxleType::LeftToRightAxle, axelSpeedkmH);
 		}
-	}
+//	}
 }
 
 void AxleSensor::AxleDebounce()
@@ -174,49 +145,10 @@ void AxleSensor::AxleDebounce()
 	_axleDetector.Trigger(TRIGGERS::AXLEDEBOUNCE);
 }
 
-void AxleSensor::RightRailISR()
-{
-	_axleDetector.Trigger(TRIGGERS::RIGHTWHEELSENSE);
-
-	//if (_rightRailCount > 0 &&
-	//	_leftRailCount > 0)
-	//{
-
-	//	// Nothing to do waiting for reset
-	//	// to count next axle.
-	//	return;
-	//}
-
-	//_rightRailCount++;
-	//_rightOutputState = PinState::High;
-	//	
-	//// Important: Does not restart if already going...
-	//_axelTime.Start();
-
-	//if (_leftRailCount > 0)
-	//{		
-	//	AxleCount--;
-
-	//	static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 10000000.0f /* mm/km */;
-	//	float axelSpeedkmH = CalculateSpeed();
-	//	int axleDebounceTime = (int)(scaleFactor * _axelScaleSizeMm / axelSpeedkmH); // msec conversion.
-
-	//	_axelTimer.Start("RightAxel",
-	//		std::bind(&AxleSensor::ResetForNextAxel, this),
-	//		axleDebounceTime,
-	//		0);		
-
-	//	if (AxleDtected != NULL)
-	//	{
-	//		AxleDtected(AxleCount, axelSpeedkmH);
-	//	}
-	//}
-}
-
 void AxleSensor::ResetForNextAxel()
 {
-	_leftRailCount = 0;
-	_rightRailCount = 0;
+//	_leftRailCount = 0;
+//	_rightRailCount = 0;
 	_leftOutputState = PinState::Low;
 	_rightOutputState = PinState::Low;
 }

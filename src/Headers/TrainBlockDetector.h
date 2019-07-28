@@ -7,7 +7,7 @@ private:
 
 	float _trainScaleSpeedKmH;
 
-	void CalculateSpeed(int axleCount, float axleScaleSpeedKmH);
+	void AxleDetected(AxleType axleCount, float axleScaleSpeedKmH);
 
 public:
 	TrainBlockDetector(AxleSensor* enterAxleCounter);
