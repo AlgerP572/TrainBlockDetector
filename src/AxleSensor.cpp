@@ -88,7 +88,7 @@ void AxleSensor::LeftWheelSecond()
 //	{
 //		AxleCount++;
 
-		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 10000000.0f /* mm/km */;
+		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 1000000.0f /* mm/km */;
 		float axelSpeedkmH = CalculateSpeed();
 		int axleDebounceTime = (int)(scaleFactor * _axelScaleSizeMm / axelSpeedkmH); // msec conversion.
 
@@ -124,7 +124,7 @@ void AxleSensor::RightWheelSecond()
 //	{
 //		AxleCount--;
 
-		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 10000000.0f /* mm/km */;
+		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 1000000.0f /* mm/km */;
 		float axelSpeedkmH = CalculateSpeed();
 		int axleDebounceTime = (int)(scaleFactor * _axelScaleSizeMm / axelSpeedkmH); // msec conversion.
 
@@ -157,7 +157,7 @@ float AxleSensor::CalculateSpeed()
 {
 	_axelTime.Stop();
 
-	static float const scaleFactor = (3600.0 /* sec/hr */ * 1000000.0 /* µsec / sec*/) / 10000000.0 /* mm / km*/;
+	static float const scaleFactor = (3600.0 /* sec/hr */ * 1000000.0 /* µsec / sec*/) / 1000000.0 /* mm / km*/;
 
 	// Speed is in km/H ...
 	float elapsed = (float) _axelTime.Elapsed().count(); // µSec

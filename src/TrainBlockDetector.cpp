@@ -31,3 +31,11 @@ void TrainBlockDetector::AxleDetected(AxleType axleType, float axleScaleSpeedKmH
 		TrainPresent = true;
 	}
 }
+
+void TrainBlockDetector::Reset()
+{
+	TrainAxleCount = 0;
+	TrainPresent = 0;
+
+	_enterAxleCounter->ResetForNextAxel();
+}

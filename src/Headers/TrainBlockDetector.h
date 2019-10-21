@@ -14,4 +14,5 @@ public:
 	
 	int TrainAxleCount;
 	bool TrainPresent;
+	void Reset();
 };
