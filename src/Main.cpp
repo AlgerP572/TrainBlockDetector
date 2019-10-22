@@ -212,7 +212,7 @@ int LeftFirstTriggerAxle(int gapTimeMicroSec, int detectorLengthMicroSec)
 int LeftFirstTrigger2AxleRollingStock(float trainSpeedkmPerh, float carEndToAxlemm, float wheelbasemm)
 {
 	int gapTimeMicroSec = (int)(float)(((gapSizemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
-	int detectorLengthMicroSec = (int)(float)(((detectorLengthmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
+	int detectorLengthMicroSec = (int)(float)((((detectorLengthmm - gapSizemm) * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 
 	int carEndToAxleMircoSec = (int)(float)(((carEndToAxlemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 	int wheelbaseMicroSec = (int)(float)(((wheelbasemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
@@ -231,7 +231,7 @@ int LeftFirstTrigger2AxleRollingStock(float trainSpeedkmPerh, float carEndToAxle
 int LeftFirstTrigger4AxleRollingStock(float trainSpeedkmPerh, float carEndToTruckmm, float truckSeparationmm, float truckWheelbasemm)
 {
 	int gapTimeMicroSec = (int)(float)(((gapSizemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
-	int detectorLengthMicroSec = (int)(float)(((detectorLengthmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
+	int detectorLengthMicroSec = (int)(float)((((detectorLengthmm - gapSizemm) * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 
 	int carEndToTruckMircoSec = (int)(float)(((carEndToTruckmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 	int truckSeparationMicroSec = (int)(float)(((truckSeparationmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
@@ -332,7 +332,8 @@ int RightFirstTrigger4AxleRollingStock(float trainSpeedkmPerh, float carEndToTru
 
 static bool counting = true;
 static int expectedAxleCount = 0;
-static float speed = 0.0f;
+static float expectedSpeed = 0.0f;
+static float actualSpeed = 0.0f;
 
 void* AxleEventThread(void* ptr)
 {
@@ -345,43 +346,55 @@ void* AxleEventThread(void* ptr)
 
 	ofstream outputFile;
 	outputFile.open("DetectionData.txt");
-	outputFile << "Speed, Expected, Actual\n";
+	outputFile << "ExpectedSpeed, ActualSpeed, ExpectedAxle, ActualAxle, TrainAxleCount\n";
 		
-	for (speed = 10.0f; speed < 100.0f; speed+=10)
+	for (expectedSpeed = 10.0f; expectedSpeed < 100.0f; expectedSpeed +=10)
 	{
 
-		// 1200 axles total in the entering the blcok
-		for (int i = 0; i < 100; i++)
+		// 3600 axles total entering the blcok
+		for (int i = 0; i < 300; i++)
 		{
 			// 4 axles total
-			expectedAxleCount += LeftFirstTrigger2AxleRollingStock(speed, 85.0f, 175.0f);
-			expectedAxleCount += LeftFirstTrigger2AxleRollingStock(speed, 85.0f, 175.0f);
+			expectedAxleCount += LeftFirstTrigger2AxleRollingStock(expectedSpeed, 85.0f, 175.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
+			expectedAxleCount += LeftFirstTrigger2AxleRollingStock(expectedSpeed, 85.0f, 175.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
 
 			// 8 axles total
-			expectedAxleCount += LeftFirstTrigger4AxleRollingStock(speed, 100.0f, 400.0f, 60.0f);
-			expectedAxleCount += LeftFirstTrigger4AxleRollingStock(speed, 100.0f, 400.0f, 60.0f);
+			expectedAxleCount += LeftFirstTrigger4AxleRollingStock(expectedSpeed, 100.0f, 400.0f, 60.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
+			expectedAxleCount += LeftFirstTrigger4AxleRollingStock(expectedSpeed, 100.0f, 400.0f, 60.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
 		}
 
-		int actual = trainBlockDetector[0].TrainAxleCount;
-		outputFile << speed << "," << expectedAxleCount << "," << actual << "\n";
+		int actual = trainBlockDetector[0].BlockAxleCount;
+		int train = trainBlockDetector[0].TrainAxleCount;
+		actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
+		outputFile << expectedSpeed << "," << actualSpeed << "," << expectedAxleCount << "," << actual << "," << train << "\n";
 				
 		Delay::Milliseconds(1000);
 
-		// 1200 axles total leaving the block
-		for (int i = 0; i < 100; i++)
+		// 3600 axles total leaving the block
+		for (int i = 0; i < 300; i++)
 		{
 			// 4 axles total
-			expectedAxleCount += RightFirstTrigger2AxleRollingStock(speed, 85.0f, 175.0f);
-			expectedAxleCount += RightFirstTrigger2AxleRollingStock(speed, 85.0f, 175.0f);
+			expectedAxleCount += RightFirstTrigger2AxleRollingStock(expectedSpeed, 85.0f, 175.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
+			expectedAxleCount += RightFirstTrigger2AxleRollingStock(expectedSpeed, 85.0f, 175.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
 
 			// 8 axles total
-			expectedAxleCount += RightFirstTrigger4AxleRollingStock(speed, 100.0f, 400.0f, 60.0f);
-			expectedAxleCount += RightFirstTrigger4AxleRollingStock(speed, 100.0f, 400.0f, 60.0f);
+			expectedAxleCount += RightFirstTrigger4AxleRollingStock(expectedSpeed, 100.0f, 400.0f, 60.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
+			expectedAxleCount += RightFirstTrigger4AxleRollingStock(expectedSpeed, 100.0f, 400.0f, 60.0f);
+			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
 		}
 		
 		// Expect zero at this point...
-		actual = trainBlockDetector[0].TrainAxleCount;
-		outputFile << speed << "," << expectedAxleCount << "," << actual << "\n";
+		actual = trainBlockDetector[0].BlockAxleCount;
+		train = trainBlockDetector[0].TrainAxleCount;
+		actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
+		outputFile << expectedSpeed << "," << actualSpeed << "," << expectedAxleCount << "," << actual << "," << train << "\n";
 		outputFile.flush();
 
 		trainBlockDetector[0].Reset();
@@ -417,7 +430,7 @@ int main(void)
 
 		// Need to continuously update the dislpay
 		// so it can be seen properly.
-		int ledDisplayValue = trainBlockDetector[0].TrainAxleCount % 10000;
+		int ledDisplayValue = trainBlockDetector[0].BlockAxleCount % 10000;
 		display.SetDisplayValue(ledDisplayValue);
 
 		for (int i = 0; i < 50; i++)
@@ -428,9 +441,11 @@ int main(void)
 		
 		if (printfDelay % 1000)
 		{
-			printf("Speed: %f, Expected: %d, Actual: %d\n",
-				speed,
+			printf("Expected Speed: %f, Actual Speed: %f, Expected Axle: %d, Actual Axle: %d. Train Axle: %d\n",
+				expectedSpeed,
+				actualSpeed,
 				expectedAxleCount,
+				trainBlockDetector[0].BlockAxleCount,
 				trainBlockDetector[0].TrainAxleCount);
 		}
 
