@@ -45,5 +45,5 @@ void TrainBlockDetector::Reset()
 	TrainPresent = 0;
 	TrainScaleSpeedKmH = 0;
 
-	_enterAxleCounter->ResetForNextAxel();
+	_enterAxleCounter->Reset();
 }

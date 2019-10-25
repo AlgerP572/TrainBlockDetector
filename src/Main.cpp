@@ -266,11 +266,11 @@ int RightFirstTriggerAxle(int gapTimeMicroSec, int detectorLengthMicroSec)
 	Delay::Microseconds(detectorLengthMicroSec);
 
 	// Both across central gap.
-	gpio.WritePin(RightAxleEvent, PinState::High);
 	gpio.WritePin(LeftAxleEvent, PinState::High);
+	gpio.WritePin(RightAxleEvent, PinState::High);
 	Delay::Microseconds(gapTimeMicroSec);
-	gpio.WritePin(RightAxleEvent, PinState::Low);
 	gpio.WritePin(LeftAxleEvent, PinState::Low);
+	gpio.WritePin(RightAxleEvent, PinState::Low);
 
 	Delay::Microseconds(detectorLengthMicroSec);
 
@@ -286,7 +286,7 @@ int RightFirstTriggerAxle(int gapTimeMicroSec, int detectorLengthMicroSec)
 int RightFirstTrigger2AxleRollingStock(float trainSpeedkmPerh, float carEndToAxlemm, float wheelbasemm)
 {
 	int gapTimeMicroSec = (int)(float)(((gapSizemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
-	int detectorLengthMicroSec = (int)(float)(((detectorLengthmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
+	int detectorLengthMicroSec = (int)(float)((((detectorLengthmm - gapSizemm) * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 
 	int carEndToAxleMircoSec = (int)(float)(((carEndToAxlemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 	int wheelbaseMicroSec = (int)(float)(((wheelbasemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
@@ -305,7 +305,7 @@ int RightFirstTrigger2AxleRollingStock(float trainSpeedkmPerh, float carEndToAxl
 int RightFirstTrigger4AxleRollingStock(float trainSpeedkmPerh, float carEndToTruckmm, float truckSeparationmm, float truckWheelbasemm)
 {
 	int gapTimeMicroSec = (int)(float)(((gapSizemm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
-	int detectorLengthMicroSec = (int)(float)(((detectorLengthmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
+	int detectorLengthMicroSec = (int)(float)((((detectorLengthmm - gapSizemm) * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 
 	int carEndToTruckMircoSec = (int)(float)(((carEndToTruckmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
 	int truckSeparationMicroSec = (int)(float)(((truckSeparationmm * trainScale / mmPerkm) / trainSpeedkmPerh) * msPerh * 1000.0);
@@ -348,11 +348,12 @@ void* AxleEventThread(void* ptr)
 	outputFile.open("DetectionData.txt");
 	outputFile << "ExpectedSpeed, ActualSpeed, ExpectedAxle, ActualAxle, TrainAxleCount\n";
 		
-	for (expectedSpeed = 10.0f; expectedSpeed < 100.0f; expectedSpeed +=10)
+	for (expectedSpeed = 200.0f; expectedSpeed > 0.0f; expectedSpeed -=10)
+//	for (expectedSpeed = 150.0f; expectedSpeed < 250.0f; expectedSpeed += 10)
 	{
 
-		// 3600 axles total entering the blcok
-		for (int i = 0; i < 300; i++)
+		// 12000 axles total entering the blcok
+		for (int i = 0; i < 1000; i++)
 		{
 			// 4 axles total
 			expectedAxleCount += LeftFirstTrigger2AxleRollingStock(expectedSpeed, 85.0f, 175.0f);
@@ -374,8 +375,8 @@ void* AxleEventThread(void* ptr)
 				
 		Delay::Milliseconds(1000);
 
-		// 3600 axles total leaving the block
-		for (int i = 0; i < 300; i++)
+		// 12000 axles total leaving the block
+		for (int i = 0; i < 1000; i++)
 		{
 			// 4 axles total
 			expectedAxleCount += RightFirstTrigger2AxleRollingStock(expectedSpeed, 85.0f, 175.0f);
@@ -390,7 +391,7 @@ void* AxleEventThread(void* ptr)
 			actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
 		}
 		
-		// Expect zero at this point...
+		// Expect block count zero at this point and train count 2x actual axles...
 		actual = trainBlockDetector[0].BlockAxleCount;
 		train = trainBlockDetector[0].TrainAxleCount;
 		actualSpeed = trainBlockDetector[0].TrainScaleSpeedKmH;
@@ -410,6 +411,7 @@ void* AxleEventThread(void* ptr)
 int main(void)
 {
 	pthread_t generateAxleEventsThread;
+	pthread_t trainBlockDetectorThread;
 
 	// Register signals 
 	signal(SIGQUIT, sig_handler);
@@ -417,7 +419,7 @@ int main(void)
 
 	// Now that library is intialized the individual devices
 	// can be intialized.
-	sysInit();
+	sysInit();	
 
 	pthread_create(&generateAxleEventsThread,
 		NULL,
