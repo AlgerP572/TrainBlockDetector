@@ -14,5 +14,6 @@ public:
 	int BlockAxleCount;
 	float TrainScaleSpeedKmH;
 	bool TrainPresent;
+
 	void Reset();
 };

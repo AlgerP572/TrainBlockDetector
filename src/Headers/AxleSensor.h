@@ -23,11 +23,9 @@ private:
 	int _rightRailPin;
 	int _leftOutputPin;
 	int _rightOutputPin;
+	float _previousSpeed;
 	PinState _leftOutputState;
 	PinState _rightOutputState;
-
-//	int _leftRailCount;
-	//int _rightRailCount;
 
 	Timer _axelTimer;
 	Stopwatch<std::chrono::microseconds> _axelTime;
@@ -48,9 +46,7 @@ private:
 	void RightRailISR();
 	float CalculateSpeed();
 
-public:
-//	int AxleCount;
-	
+public:	
 	AxleSensor(Gpio* gpio, int leftRailPin, int rightRailPin, int leftOutputPin = -1, int rightOutputPin = -1);
 	void SysInit(void);
 	void RefreshOutputStatus();
@@ -62,4 +58,5 @@ public:
 	void RightWheelFirst();
 	void RightWheelSecond();
 	void ResetForNextAxel();
+	void Reset();
 };

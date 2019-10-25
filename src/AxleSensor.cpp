@@ -18,10 +18,10 @@ AxleSensor::AxleSensor(Gpio* gpio,
 	int rightRailPin,
 	int leftOutputPin,
 	int rightOutputPin) :
-	_axleDetector(this)
+	_axleDetector(this),
+	_previousSpeed(0)
 {
 	_gpio = gpio;
-//	AxleCount = 0;	
 	_leftRailPin = leftRailPin;
 	_rightRailPin = rightRailPin;
 
@@ -57,7 +57,7 @@ void AxleSensor::SysInit()
 	if (_rightOutputPin > -1)
 	{
 		_gpio->SetPinMode(_rightOutputPin, PinMode::Output);
-	}
+	}	
 
 	_axleDetector.Trigger(TRIGGERS::DEFAULTENTRY);
 }
@@ -84,12 +84,21 @@ void AxleSensor::LeftWheelFirst()
 
 void AxleSensor::LeftWheelSecond()
 {
-//	if (_rightRailCount > 0)
-//	{
-//		AxleCount++;
-
 		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 1000000.0f /* mm/km */;
 		float axelSpeedkmH = CalculateSpeed();
+
+		if ((_previousSpeed != 0) &&
+			(abs(axelSpeedkmH - _previousSpeed) >= (0.1f * _previousSpeed)))
+		{
+
+			// look for outlier and ignore.  This is likely a linux thread timing issue...
+			axelSpeedkmH = _previousSpeed;
+		}
+		else
+		{
+			_previousSpeed = axelSpeedkmH;
+		}
+
 		int axleDebounceTime = (int)(scaleFactor * _axelScaleSizeMm / axelSpeedkmH); // msec conversion.
 
 		_axelTimer.Start((char*)"LeftAxel",
@@ -101,7 +110,6 @@ void AxleSensor::LeftWheelSecond()
 		{
 			AxleDtected(AxleType::RightToLeftAxle, axelSpeedkmH);
 		}
-//	}
 }
 
 void AxleSensor::RightRailISR()
@@ -111,7 +119,6 @@ void AxleSensor::RightRailISR()
 
 void AxleSensor::RightWheelFirst()
 {
-//	_rightRailCount++;
 	_rightOutputState = PinState::High;
 
 	// Important: Does not restart if already going...
@@ -120,12 +127,21 @@ void AxleSensor::RightWheelFirst()
 
 void AxleSensor::RightWheelSecond()
 {
-//	if (_leftRailCount > 0)
-//	{
-//		AxleCount--;
-
 		static float scaleFactor = 3600.0f /*sec/h*/ * 1000.0f /* ms / sec */ / 1000000.0f /* mm/km */;
 		float axelSpeedkmH = CalculateSpeed();
+		
+		if ((_previousSpeed != 0) &&
+			(abs(axelSpeedkmH - _previousSpeed) >= (0.1f * _previousSpeed)))
+		{
+
+			// look for outlier and ignore.  This is likely a linux thread timing issue...
+			axelSpeedkmH = _previousSpeed;
+		}
+		else
+		{
+			_previousSpeed = axelSpeedkmH;
+		}
+
 		int axleDebounceTime = (int)(scaleFactor * _axelScaleSizeMm / axelSpeedkmH); // msec conversion.
 
 		_axelTimer.Start("RightAxel",
@@ -137,20 +153,23 @@ void AxleSensor::RightWheelSecond()
 		{
 			AxleDtected(AxleType::LeftToRightAxle, axelSpeedkmH);
 		}
-//	}
 }
 
 void AxleSensor::AxleDebounce()
 {
-	_axleDetector.Trigger(TRIGGERS::AXLEDEBOUNCE);
+	_axleDetector.Trigger(TRIGGERS::AXLEDEBOUNCE);	
+}
+
+void AxleSensor::Reset()
+{
+	ResetForNextAxel();
+	_previousSpeed = 0;
 }
 
 void AxleSensor::ResetForNextAxel()
 {
-//	_leftRailCount = 0;
-//	_rightRailCount = 0;
 	_leftOutputState = PinState::Low;
-	_rightOutputState = PinState::Low;
+	_rightOutputState = PinState::Low;	
 }
 
 float AxleSensor::CalculateSpeed()
