@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../CPlusPlusStateMchine/src/StateMachine.h"
+#include "../../../CPlusPlusStateMchine/src/StateMachine.h"
 #include "StatesTriggers.h"
 #pragma once
 
-#include "./AxleSensor.h"
+#include "../Headers/AxleSensor.h"
 
 class LeftWheelFirst : public StateTemplate<LeftWheelFirst,
 	TRIGGERS,

@@ -1,0 +1,3 @@
+ExpectedSpeed, ActualSpeed, ExpectedAxle, ActualAxle, TrainAxleCount
+200,0.491505,12000,0,4
+200,0.491505,0,0,4

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "../CPlusPlusStateMchine/src/StateMachine.h"
+#include "../../../CPlusPlusStateMchine/src/StateMachine.h"
 #include "StatesTriggers.h"
-#include "./AxleSensor.h"
+#include "../Headers/AxleSensor.h"
 
 class Idle : public StateTemplate<Idle,
 	TRIGGERS,

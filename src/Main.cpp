@@ -2,13 +2,13 @@
 #include <stdint.h>
 #include <signal.h>
 
-#include "../../../APLPIe/Src/Headers/Clock.h"
-#include "../../../APLPIe/Src/Headers/Delay.h"
-#include "../../../APLPIe/Src/Headers/Dma.h"
-#include "../../../APLPIe/Src/Headers/Gpio.h"
-#include "../../../APLPIe/Src/Headers/Pwm.h"
-#include "../../../APLPIe/Src/Headers/Timer.h"
-#include "../../../APLPIe/Src/Headers/Display.h"
+#include "../../APLPIe/Src/Headers/Clock.h"
+#include "../../APLPIe/Src/Headers/Delay.h"
+#include "../../APLPIe/Src/Headers/Dma.h"
+#include "../../APLPIe/Src/Headers/Gpio.h"
+#include "../../APLPIe/Src/Headers/Pwm.h"
+#include "../../APLPIe/Src/Headers/Timer.h"
+#include "../../APLPIe/Src/Headers/Display.h"
 
 #include "./Headers/StopWatch.h"
 #include "./Headers/AxleSensor.h"

@@ -1,5 +1,5 @@
 #include "./Headers/AxleSensor.h"
-#include "../AxleDetector/StatesTriggers.h"
+#include "./AxleDetector/StatesTriggers.h"
 
 void AxleSensor::LeftRailIsr0(void* arg)
 {
@@ -176,10 +176,10 @@ float AxleSensor::CalculateSpeed()
 {
 	_axelTime.Stop();
 
-	static float const scaleFactor = (3600.0 /* sec/hr */ * 1000000.0 /* µsec / sec*/) / 1000000.0 /* mm / km*/;
+	static float const scaleFactor = (3600.0 /* sec/hr */ * 1000000.0 /* ï¿½sec / sec*/) / 1000000.0 /* mm / km*/;
 
 	// Speed is in km/H ...
-	float elapsed = (float) _axelTime.Elapsed().count(); // µSec
+	float elapsed = (float) _axelTime.Elapsed().count(); // ï¿½Sec
 	_axelTime.Reset();
 
 	float distance = (_detectorLengthMm * _railroadScale); 
